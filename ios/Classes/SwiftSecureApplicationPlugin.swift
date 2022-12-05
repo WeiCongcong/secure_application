@@ -5,6 +5,8 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
     var secured = false;
     var opacity: CGFloat = 0.2;
 
+    var textField: UITextField?
+
     var backgroundTask: UIBackgroundTaskIdentifier!
 
     internal let registrar: FlutterPluginRegistrar
@@ -76,8 +78,19 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
         let opacity = args["opacity"] as? NSNumber {
             self.opacity = opacity as! CGFloat
         }
+        if let window = UIApplication.shared.windows.filter({ (w) -> Bool in
+            return w.isHidden == false
+        }).first, {
+            self.textField = window.makeSecure()
+            print("----secured")
+        }
     } else if (call.method == "open") {
         secured = false;
+        if let field = self.textField {
+            textField.layer.removeFromSuperlayer()
+            textField.removeFromSuperview()
+            self.textField = nil
+        }
     }  else if (call.method == "opacity") {
             if let args = call.arguments as? Dictionary<String, Any>,
                   let opacity = args["opacity"] as? NSNumber {
@@ -98,4 +111,17 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
         }
     }
   }
+}
+
+extension UIWindow {
+    func makeSecure() -> UITextField {
+        let textField = UITextField()
+        textField.isSecureTextEntry = true
+        self.addSubview(textField)
+        textField.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+        textField.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        self.layer.superlayer?.addSublayer(textField.layer)
+        textField.layer.sublayers?.first?.addSublayer(self.layer)
+        return textField
+    }
 }
