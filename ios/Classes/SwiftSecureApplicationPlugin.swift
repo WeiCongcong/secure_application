@@ -94,9 +94,9 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
             }
         }
     } else if (call.method == "pause") {
-        secure = false;
+        secured = false;
     } else if (call.method == "resume") {
-        secure = true;
+        secured = true;
     }  else if (call.method == "opacity") {
             if let args = call.arguments as? Dictionary<String, Any>,
                   let opacity = args["opacity"] as? NSNumber {
