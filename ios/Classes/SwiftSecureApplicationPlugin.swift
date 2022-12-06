@@ -80,17 +80,23 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
         }
         if let window = UIApplication.shared.windows.filter({ (w) -> Bool in
             return w.isHidden == false
-        }).first, {
+        }).first {
             self.textField = window.makeSecure()
-            print("----secured")
         }
     } else if (call.method == "open") {
         secured = false;
-        if let field = self.textField {
-            textField.layer.removeFromSuperlayer()
-            textField.removeFromSuperview()
-            self.textField = nil
+        if let window = UIApplication.shared.windows.filter({ (w) -> Bool in
+            return w.isHidden == false
+        }).first {
+            if (self.textField != nil) {
+                window.unlock(textField: self.textField!)
+                self.textField = nil
+            }
         }
+    } else if (call.method == "pause") {
+        secure = false;
+    } else if (call.method == "resume") {
+        secure = true;
     }  else if (call.method == "opacity") {
             if let args = call.arguments as? Dictionary<String, Any>,
                   let opacity = args["opacity"] as? NSNumber {
@@ -123,5 +129,11 @@ extension UIWindow {
         self.layer.superlayer?.addSublayer(textField.layer)
         textField.layer.sublayers?.first?.addSublayer(self.layer)
         return textField
+    }
+    func unlock(textField: UITextField) {
+        textField.layer.superlayer?.addSublayer(self.layer)
+        if (textField.superview != nil) {
+            textField.removeFromSuperview()
+        }
     }
 }

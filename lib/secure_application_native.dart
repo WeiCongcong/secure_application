@@ -30,8 +30,12 @@ class SecureApplicationNative {
     return _channel.invokeMethod('secure');
   }
 
-  static Future open() {
-    return _channel.invokeMethod('open');
+  static Future pause() {
+    return _channel.invokeMethod('pause');
+  }
+
+  static Future resume() {
+    return _channel.invokeMethod('resume');
   }
 
   static Future lock() {
