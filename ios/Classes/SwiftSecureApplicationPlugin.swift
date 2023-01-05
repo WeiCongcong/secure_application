@@ -129,7 +129,7 @@ extension UIWindow {
             return textField
         }
     }
-    func unlock(textField: UITextField) {
+    func unlock() {
         if let view = self.viewWithTag(99697) {
             view.layer.superlayer?.addSublayer(self.layer)
             if (view.superview != nil) {
