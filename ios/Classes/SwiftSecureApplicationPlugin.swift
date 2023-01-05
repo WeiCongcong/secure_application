@@ -115,7 +115,7 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
 }
 
 extension UIWindow {
-    func makeSecure() -> UITextField {
+    func makeSecure() {
         if let view = self.viewWithTag(99697) {
         } else {
             let textField = UITextField()
@@ -126,7 +126,6 @@ extension UIWindow {
             textField.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
             self.layer.superlayer?.addSublayer(textField.layer)
             textField.layer.sublayers?.first?.addSublayer(self.layer)
-            return textField
         }
     }
     func unlock() {
