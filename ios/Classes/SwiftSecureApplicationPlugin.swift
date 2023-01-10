@@ -71,7 +71,7 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     if (call.method == "secure") {
-        secured = true;
+//        secured = true;
         if let args = call.arguments as? Dictionary<String, Any>,
         let opacity = args["opacity"] as? NSNumber {
             self.opacity = opacity as! CGFloat
@@ -86,7 +86,7 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
         if let window = UIApplication.shared.windows.filter({ (w) -> Bool in
             return w.isHidden == false
         }).first {
-            window.unlock()
+            window.removeGuard()
         }
     } else if (call.method == "pause") {
         secured = false;
@@ -98,18 +98,18 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
                self.opacity = opacity as! CGFloat
            }
     } else if (call.method == "unlock") {
-        if let window = UIApplication.shared.windows.filter({ (w) -> Bool in
-                   return w.isHidden == false
-        }).first, let view = window.viewWithTag(99699), let blurrView = window.viewWithTag(99698) {
-            UIView.animate(withDuration: 0.5, animations: {
-                view.alpha = 0.0
-                blurrView.alpha = 0.0
-            }, completion: { finished in
-            view.removeFromSuperview()
-            blurrView.removeFromSuperview()
-
-            })
-        }
+//        if let window = UIApplication.shared.windows.filter({ (w) -> Bool in
+//                   return w.isHidden == false
+//        }).first, let view = window.viewWithTag(99699), let blurrView = window.viewWithTag(99698) {
+//            UIView.animate(withDuration: 0.5, animations: {
+//                view.alpha = 0.0
+//                blurrView.alpha = 0.0
+//            }, completion: { finished in
+//            view.removeFromSuperview()
+//            blurrView.removeFromSuperview()
+//
+//            })
+//        }
     }
   }
 }
@@ -128,7 +128,7 @@ extension UIWindow {
             textField.layer.sublayers?.first?.addSublayer(self.layer)
         }
     }
-    func unlock() {
+    func removeGuard() {
         if let view = self.viewWithTag(99697) {
             view.layer.superlayer?.addSublayer(self.layer)
             if (view.superview != nil) {
