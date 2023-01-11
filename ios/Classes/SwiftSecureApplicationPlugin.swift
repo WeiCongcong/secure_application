@@ -91,7 +91,7 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
             return w.isHidden == false
         }).first {
             if (self.textField != nil) {
-                window.removeGuard(textField: self.textField)
+                window.removeGuard(textField: self.textField!)
                 self.textField = nil
             }
         }
