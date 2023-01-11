@@ -5,6 +5,8 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
     var secured = false;
     var opacity: CGFloat = 0.2;
 
+    var textField: UITextField?
+
     var backgroundTask: UIBackgroundTaskIdentifier!
 
     internal let registrar: FlutterPluginRegistrar
@@ -79,19 +81,24 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
         if let window = UIApplication.shared.windows.filter({ (w) -> Bool in
             return w.isHidden == false
         }).first {
-            window.makeSecure()
+            if (self.textField == nil) {
+                self.textField = window.makeSecure()
+            }
         }
     } else if (call.method == "open") {
         secured = false;
         if let window = UIApplication.shared.windows.filter({ (w) -> Bool in
             return w.isHidden == false
         }).first {
-            window.removeGuard()
+            if (self.textField != nil) {
+                window.removeGuard(textField: self.textField)
+                self.textField = nil
+            }
         }
     } else if (call.method == "pause") {
         secured = false;
     } else if (call.method == "resume") {
-        secured = true;
+//        secured = true;
     }  else if (call.method == "opacity") {
             if let args = call.arguments as? Dictionary<String, Any>,
                   let opacity = args["opacity"] as? NSNumber {
@@ -115,25 +122,20 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
 }
 
 extension UIWindow {
-    func makeSecure() {
-        if let view = self.viewWithTag(99697) {
-        } else {
-            let textField = UITextField()
-            textField.tag = 99697
-            textField.isSecureTextEntry = true
-            self.addSubview(textField)
-            textField.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-            textField.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-            self.layer.superlayer?.addSublayer(textField.layer)
-            textField.layer.sublayers?.first?.addSublayer(self.layer)
-        }
+    func makeSecure() -> UITextField {
+        let textField = UITextField()
+        textField.isSecureTextEntry = true
+        self.addSubview(textField)
+        textField.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+        textField.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        self.layer.superlayer?.addSublayer(textField.layer)
+        textField.layer.sublayers?.first?.addSublayer(self.layer)
+        return textField
     }
-    func removeGuard() {
-        if let view = self.viewWithTag(99697) {
-            view.layer.superlayer?.addSublayer(self.layer)
-            if (view.superview != nil) {
-                view.removeFromSuperview()
-            }
+    func removeGuard(textField: UITextField) {
+        textField.layer.superlayer?.addSublayer(self.layer)
+        if (textField.superview != nil) {
+            textField.removeFromSuperview()
         }
     }
 }
