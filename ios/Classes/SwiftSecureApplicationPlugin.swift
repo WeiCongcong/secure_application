@@ -73,7 +73,7 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     if (call.method == "secure") {
-//        secured = true;
+        secured = true;
         if let args = call.arguments as? Dictionary<String, Any>,
         let opacity = args["opacity"] as? NSNumber {
             self.opacity = opacity as! CGFloat
@@ -83,6 +83,19 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
         }).first {
             if (self.textField == nil) {
                 self.textField = window.makeSecure()
+            }
+            if let existingTempView = window.viewWithTag(99696){
+                window.bringSubviewToFront(existingTempView)
+                existingTempView.removeFromSuperview()
+                return
+            } else {
+                let tempView = UIView(frame: window.bounds);
+                tempView.tag = 99696
+                tempView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                tempView.backgroundColor = UIColor(white: 1, alpha: opacity)
+                window.addSubview(tempView)
+                window.bringSubviewToFront(tempView)
+                tempView.removeFromSuperview()
             }
         }
     } else if (call.method == "open") {
@@ -98,25 +111,25 @@ public class SwiftSecureApplicationPlugin: NSObject, FlutterPlugin {
     } else if (call.method == "pause") {
         secured = false;
     } else if (call.method == "resume") {
-//        secured = true;
+        secured = true;
     }  else if (call.method == "opacity") {
             if let args = call.arguments as? Dictionary<String, Any>,
                   let opacity = args["opacity"] as? NSNumber {
                self.opacity = opacity as! CGFloat
            }
     } else if (call.method == "unlock") {
-//        if let window = UIApplication.shared.windows.filter({ (w) -> Bool in
-//                   return w.isHidden == false
-//        }).first, let view = window.viewWithTag(99699), let blurrView = window.viewWithTag(99698) {
-//            UIView.animate(withDuration: 0.5, animations: {
-//                view.alpha = 0.0
-//                blurrView.alpha = 0.0
-//            }, completion: { finished in
-//            view.removeFromSuperview()
-//            blurrView.removeFromSuperview()
-//
-//            })
-//        }
+        if let window = UIApplication.shared.windows.filter({ (w) -> Bool in
+                   return w.isHidden == false
+        }).first, let view = window.viewWithTag(99699), let blurrView = window.viewWithTag(99698) {
+            UIView.animate(withDuration: 0.5, animations: {
+                view.alpha = 0.0
+                blurrView.alpha = 0.0
+            }, completion: { finished in
+            view.removeFromSuperview()
+            blurrView.removeFromSuperview()
+
+            })
+        }
     }
   }
 }
